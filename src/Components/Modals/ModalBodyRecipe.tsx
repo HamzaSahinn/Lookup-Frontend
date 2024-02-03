@@ -1,35 +1,59 @@
+"use client";
 import { ApiClient } from "@/utils/ClientApi.utils";
-import { FilmIcon } from "@heroicons/react/24/outline";
+import { BeakerIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 
-export default function ModalBodyFilm() {
+export default function ModalBodyRecipe() {
+  const [ingredients, setIngredients] = useState([{ ingredient: "" }]);
   const [formData, setFormData] = useState({
     name: "",
-    category: "",
     length: 0,
-    date: "",
+    description: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleAddInput = () => {
+    setIngredients([...ingredients, { ingredient: "" }]);
+  };
+
+  const handleChange = (event: any, index: number) => {
+    let { name, value } = event.target;
+    let onChangeValue = [...ingredients];
+    onChangeValue[index]["ingredient"] = value;
+    setIngredients(onChangeValue);
+  };
+
+  const handleDeleteInput = (index: number) => {
+    const newArray = [...ingredients];
+    newArray.splice(index, 1);
+    setIngredients(newArray);
+  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     setIsLoading(true);
     const client = ApiClient();
+    console.log({
+      Name: formData.name,
+      RequiredTimeIntermsSeconds: formData.length,
+      RecipeDescription: formData.description,
+      Ingredients: ingredients.map((e) => e.ingredient),
+    });
     try {
-      const res = await client.post("/api/film", {
+      const res = await client.post("/api/recipe", {
         Name: formData.name,
-        Category: formData.category,
-        ReleaseDate: new Date(formData.date),
-        LengthInSeconds: formData.length,
+        RequiredTimeIntermsSeconds: formData.length,
+        RecipeDescription: formData.description,
+        Ingredients: ingredients.map((e) => e.ingredient),
       });
 
       if (res.status === 201) {
-        toast.success("Film Added");
+        toast.success("Recipe Added");
       } else {
         toast.error("Unknown error");
       }
@@ -50,14 +74,14 @@ export default function ModalBodyFilm() {
   return (
     <>
       <ToastContainer hideProgressBar={true} position="bottom-right" />
-      <form>
+      <form action="#">
         <div className="grid gap-4 mb-4 sm:grid-cols-2">
           <div>
             <label
               htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900"
             >
-              Film Name
+              Recipe Name
             </label>
             <input
               type="text"
@@ -69,29 +93,13 @@ export default function ModalBodyFilm() {
               required
             />
           </div>
-          <div>
-            <label
-              htmlFor="category"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Category
-            </label>
-            <input
-              type="text"
-              name="category"
-              id="category"
-              onChange={handleOnChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-              placeholder="Film Category"
-              required
-            />
-          </div>
+
           <div>
             <label
               htmlFor="length"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Film Length In Terms of Seconds
+              Required Time In Terms of Seconds
             </label>
             <input
               type="number"
@@ -104,27 +112,58 @@ export default function ModalBodyFilm() {
               required
             />
           </div>
-          <div>
+          <div className="flex flex-col gap-3 max-h-60 overflow-y-auto w-full sm:col-span-2 sm:pr-6">
+            {ingredients.map((item, index) => (
+              <div className="flex flex-row gap-2 w-full" key={index}>
+                <input
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  placeholder="Some Fresh Food"
+                  name="ingredient"
+                  type="text"
+                  value={item.ingredient}
+                  onChange={(event) => handleChange(event, index)}
+                />
+
+                {ingredients.length > 1 && (
+                  <button onClick={() => handleDeleteInput(index)}>
+                    <div className="p-1 hover:bg-gray-50 rounded-md">
+                      <TrashIcon className="w-5 h-5 text-red-500" />
+                    </div>
+                  </button>
+                )}
+                {index === ingredients.length - 1 && (
+                  <button onClick={() => handleAddInput()}>
+                    <div className="p-1 hover:bg-gray-50 rounded-md">
+                      <PlusIcon className="w-5 h-5 text-blue-500" />
+                    </div>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="sm:col-span-2">
             <label
-              htmlFor="date"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="description"
+              className="block mb-2 text-sm font-medium text-gray-900"
             >
-              Release Date
+              Description
             </label>
-            <input
-              type="date"
-              name="date"
-              id="date"
+            <textarea
+              id="description"
+              name="description"
+              rows={4}
               onChange={handleOnChange}
-              className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
-            />
+              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+              placeholder="Write product description here"
+            ></textarea>
           </div>
         </div>
         <button
-          onClick={handleSubmit}
-          disabled={isLoading}
           type="submit"
-          className="text-white inline-flex gap-2 items-center bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          disabled={isLoading}
+          onClick={handleSubmit}
+          className="text-white inline-flex items-center bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
           {isLoading ? (
             <div role="status">
@@ -147,9 +186,9 @@ export default function ModalBodyFilm() {
               <span className="sr-only">Loading...</span>
             </div>
           ) : (
-            <FilmIcon className="mr-1 -ml-1 w-6 h-6" />
+            <BeakerIcon className="mr-1 -ml-1 w-6 h-6" />
           )}
-          Add new film
+          Add new recipe
         </button>
       </form>
     </>

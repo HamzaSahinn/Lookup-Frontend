@@ -15,7 +15,9 @@ export async function POST(req: NextApiRequest, res: Response) {
   const decodedToken = jwtDecode<JwtPayload>(accessToken);
 
   const isAccessTokenExpired = Date.now() / 1000 > (decodedToken.exp || 0);
-
+  if (isAccessTokenExpired) {
+    return Response.json({ success: false }, { status: 400 });
+  }
   const refreshToken = parsedCookies?.refreshToken;
 
   // - Fetch new access token if it expires

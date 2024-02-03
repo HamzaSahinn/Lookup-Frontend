@@ -2,8 +2,15 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import ModalSchema from "@/Components/Modals/ModalSchema";
-import { FilmIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  BeakerIcon,
+  FilmIcon,
+  PlusCircleIcon,
+  WindowIcon,
+} from "@heroicons/react/24/outline";
 import ModalBodyFilm from "@/Components/Modals/ModalBodyFilm";
+import ModalBodyRecipe from "@/Components/Modals/ModalBodyRecipe";
+import ModalBodyGame from "@/Components/Modals/ModalBodyGame";
 
 export default function Page() {
   const context = useContext(AuthContext);
@@ -46,11 +53,11 @@ export default function Page() {
             className="flex flex-row gap-3 self-end items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-4 focus:outline-none"
             onClick={() => setIsOpenRecipe((prev) => !prev)}
           >
-            <PlusCircleIcon className="w-4 h-4" />
+            <BeakerIcon className="w-4 h-4" />
             Add Recipe
           </button>
           <ModalSchema isOpen={isOpenRecipe} setIsOpen={setIsOpenRecipe}>
-            <h1>Deneme Recipe</h1>
+            <ModalBodyRecipe />
           </ModalSchema>
         </div>
 
@@ -66,11 +73,11 @@ export default function Page() {
             className="flex flex-row gap-3 self-end items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-4 focus:outline-none"
             onClick={() => setIsOpenGame((prev) => !prev)}
           >
-            <PlusCircleIcon className="w-4 h-4" />
+            <WindowIcon className="w-4 h-4" />
             Add Game
           </button>
           <ModalSchema isOpen={isOpenGame} setIsOpen={setIsOpenGame}>
-            <h1>Deneme Game</h1>
+            <ModalBodyGame />
           </ModalSchema>
         </div>
       </div>

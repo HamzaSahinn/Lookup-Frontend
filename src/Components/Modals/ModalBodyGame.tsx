@@ -1,15 +1,16 @@
+"use client";
 import { ApiClient } from "@/utils/ClientApi.utils";
-import { FilmIcon } from "@heroicons/react/24/outline";
+import { WindowIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 
-export default function ModalBodyFilm() {
+export default function ModalBodyGame() {
   const [formData, setFormData] = useState({
     name: "",
-    category: "",
-    length: 0,
+    genre: "",
+    price: 0,
     date: "",
   });
 
@@ -21,15 +22,15 @@ export default function ModalBodyFilm() {
     setIsLoading(true);
     const client = ApiClient();
     try {
-      const res = await client.post("/api/film", {
+      const res = await client.post("/api/game", {
         Name: formData.name,
-        Category: formData.category,
+        Genre: formData.genre,
         ReleaseDate: new Date(formData.date),
-        LengthInSeconds: formData.length,
+        price: formData.price,
       });
 
       if (res.status === 201) {
-        toast.success("Film Added");
+        toast.success("Game Added");
       } else {
         toast.error("Unknown error");
       }
@@ -57,7 +58,7 @@ export default function ModalBodyFilm() {
               htmlFor="name"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Film Name
+              Game Name
             </label>
             <input
               type="text"
@@ -65,38 +66,38 @@ export default function ModalBodyFilm() {
               id="name"
               onChange={handleOnChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-              placeholder="Film name"
+              placeholder="Game name"
               required
             />
           </div>
           <div>
             <label
-              htmlFor="category"
+              htmlFor="genre"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Category
+              Genre
             </label>
             <input
               type="text"
-              name="category"
-              id="category"
+              name="genre"
+              id="genre"
               onChange={handleOnChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-              placeholder="Film Category"
+              placeholder="Game genre"
               required
             />
           </div>
           <div>
             <label
-              htmlFor="length"
+              htmlFor="price"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Film Length In Terms of Seconds
+              Price
             </label>
             <input
               type="number"
-              id="length"
-              name="length"
+              id="price"
+              name="price"
               onChange={handleOnChange}
               aria-describedby="helper-text-explanation"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -122,9 +123,9 @@ export default function ModalBodyFilm() {
         </div>
         <button
           onClick={handleSubmit}
-          disabled={isLoading}
           type="submit"
-          className="text-white inline-flex gap-2 items-center bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          disabled={isLoading}
+          className="text-white inline-flex items-center bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
           {isLoading ? (
             <div role="status">
@@ -147,9 +148,9 @@ export default function ModalBodyFilm() {
               <span className="sr-only">Loading...</span>
             </div>
           ) : (
-            <FilmIcon className="mr-1 -ml-1 w-6 h-6" />
+            <WindowIcon className="mr-1 -ml-1 w-6 h-6" />
           )}
-          Add new film
+          Add new game
         </button>
       </form>
     </>

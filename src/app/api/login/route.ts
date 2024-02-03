@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     expiresIn,
     accessToken,
     refreshToken,
+    isAuthenticated: true,
   };
 
   cookies().set("jwt-token", JSON.stringify(cookieObj), {

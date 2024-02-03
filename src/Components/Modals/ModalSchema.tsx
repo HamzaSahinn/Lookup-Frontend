@@ -29,9 +29,7 @@ export default function ModalSchema({
         size="4xl"
         className="p-2"
       >
-        <ModalContent className="p-4">
-          {(onClose) => <>{children}</>}
-        </ModalContent>
+        <ModalContent className="p-4">{children}</ModalContent>
       </Modal>
     </>
   );

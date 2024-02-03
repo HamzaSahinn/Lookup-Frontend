@@ -9,7 +9,6 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="px-8">{children}</div>;
   const appCookie = cookies().get("jwt-token")?.value ?? "";
   const parsedCookies = appCookie ? JSON.parse(appCookie) : {};
   const accessToken = parsedCookies?.accessToken ?? null;
