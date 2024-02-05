@@ -95,8 +95,8 @@ export default function DefaultNavbar() {
           </DropdownMenu>
         </Dropdown>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            About
+          <Link color="foreground" href="/dashboard">
+            Dashboard
           </Link>
         </NavbarItem>
       </NavbarContent>

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { createContext } from "react";
 
 export const setTokenCookie = (
   expiresIn: number,
@@ -36,4 +35,13 @@ export const login = async (mail: string, password: string) => {
   } else {
     return false;
   }
+};
+
+export const logout = async () => {
+  const res = await fetch("/api/logout", {
+    method: "get",
+  });
+
+  if (res.status === 200) return true;
+  else return false;
 };

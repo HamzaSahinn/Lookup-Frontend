@@ -16,7 +16,6 @@ export default function Page() {
 
   const handleChange = (e: any) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    console.log(formData);
   };
 
   const handleSubmit = async (e: any) => {
@@ -134,7 +133,7 @@ export default function Page() {
               </div>
               <div>
                 <label
-                  htmlFor="confirm-password"
+                  htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Confirm password

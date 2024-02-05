@@ -3,14 +3,18 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import ModalSchema from "@/Components/Modals/ModalSchema";
 import {
+  ArrowLeftStartOnRectangleIcon,
   BeakerIcon,
   FilmIcon,
-  PlusCircleIcon,
   WindowIcon,
 } from "@heroicons/react/24/outline";
 import ModalBodyFilm from "@/Components/Modals/ModalBodyFilm";
 import ModalBodyRecipe from "@/Components/Modals/ModalBodyRecipe";
 import ModalBodyGame from "@/Components/Modals/ModalBodyGame";
+import { logout } from "@/utils/auth.utils";
+import { useRouter } from "next/navigation";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function Page() {
   const context = useContext(AuthContext);
@@ -18,8 +22,25 @@ export default function Page() {
   const [isOpenRecipe, setIsOpenRecipe] = useState<boolean>(false);
   const [isOpenGame, setIsOpenGame] = useState<boolean>(false);
 
+  const router = useRouter();
+
   return (
     <>
+      <ToastContainer hideProgressBar={true} position="bottom-right" />
+
+      <div className="flex flex-row justify-end">
+        <button
+          onClick={async () => {
+            if (await logout()) router.push("/");
+            toast.error("Logout error");
+          }}
+          type="button"
+          className="text-white flex flex-row gap-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none"
+        >
+          <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+          Logout
+        </button>
+      </div>
       <div className="grid grid-cols-3 gap-3 mt-12">
         <div className="border border-blue-600 ring-2 ring-blue-200 p-4 rounded-lg flex flex-col gap-2">
           <h2 className="font-semibold">Add Film to Lookup</h2>

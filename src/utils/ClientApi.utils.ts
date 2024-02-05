@@ -3,7 +3,7 @@ import { getTokenCookie } from "./auth.utils";
 
 const baseURL = "https://localhost:7099";
 
-export const ApiClient = () => {
+export const ApiClientWithAuth = () => {
   const defaultOptions = {
     baseURL,
   };
@@ -19,6 +19,25 @@ export const ApiClient = () => {
 
     return request;
   });
+
+  instance.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      console.log(`error`, error);
+    }
+  );
+
+  return instance;
+};
+
+export const ApiClientPublic = () => {
+  const defaultOptions = {
+    baseURL,
+  };
+
+  const instance = axios.create(defaultOptions);
 
   instance.interceptors.response.use(
     (response) => {

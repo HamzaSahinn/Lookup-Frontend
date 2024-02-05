@@ -1,7 +1,45 @@
-import DefaultCard from "@/Components/LookupCards/DefaultCard";
+"use client";
+import FilmCard from "@/Components/LookupCards/FilmCard";
+import DefaultPagination from "@/Components/Pagination/DefaultPagination";
+import { FilmDto } from "@/types/dto.types";
+import { ApiClientPublic } from "@/utils/ClientApi.utils";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function Page() {
+  const Client = ApiClientPublic();
+  const [films, setFilms] = useState<[FilmDto]>();
+  const [totalPage, setTotalpage] = useState(1);
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const handleSearch = useDebouncedCallback((term) => {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("Name", term);
+    } else {
+      params.delete("Name");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 300);
+
+  useEffect(() => {
+    Client.get(
+      `/api/film?Page=${searchParams.get("Page") || "1"}&Name=${
+        searchParams.get("Name") || ""
+      }`
+    ).then((res) => setFilms(res.data));
+  }, [searchParams]);
+
+  useEffect(() => {
+    Client.get(`/api/film/count`).then((res) =>
+      setTotalpage(1 + Math.floor(res.data / 16))
+    );
+  }, []);
   return (
     <>
       <h1 className="text-center mt-5 text-4xl font-semibold mb-6">
@@ -24,6 +62,10 @@ export default function Page() {
             id="default-search"
             className="block w-full p-4 ps-10 text-sm text-gray-900 border-2 border-blue-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search Mockups, Logos..."
+            onChange={(e) => {
+              handleSearch(e.target.value);
+            }}
+            defaultValue={searchParams.get("Name")?.toString()}
             required
           />
           <button
@@ -35,11 +77,12 @@ export default function Page() {
         </div>
       </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
-        <DefaultCard />
-        <DefaultCard />
-        <DefaultCard />
-        <DefaultCard />
-        <DefaultCard />
+        {films?.map((e) => {
+          return <FilmCard key={e.id} film={e} />;
+        })}
+      </div>
+      <div className="flex flex-row justify-center mt-8">
+        <DefaultPagination totalPage={totalPage} />
       </div>
     </>
   );

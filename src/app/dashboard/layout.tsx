@@ -35,7 +35,7 @@ export default async function DashboardLayout({
         isAuthenticated: decodedToken.isAuthenticated,
       }}
     >
-      <div className="px-8">{children}</div>
+      <div className="px-8 py-2">{children}</div>
     </AuthContextProvider>
   );
 }
