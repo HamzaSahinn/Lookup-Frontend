@@ -25,5 +25,5 @@ export default function RootLayout({
     if (!isAccessTokenExpired) return redirect("/dashboard");
   }
 
-  return <div className="px-8">{children}</div>;
+  return <div>{children}</div>;
 }

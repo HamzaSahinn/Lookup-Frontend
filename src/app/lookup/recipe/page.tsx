@@ -1,5 +1,6 @@
 "use client";
 
+import LookupLoader from "@/Components/Loaders/LookupLoader";
 import RecipeCard from "@/Components/LookupCards/RecipeCard";
 import DefaultPagination from "@/Components/Pagination/DefaultPagination";
 import { RecipeDto } from "@/types/dto.types";
@@ -12,8 +13,8 @@ import { useDebouncedCallback } from "use-debounce";
 export default function Page() {
   const Client = ApiClientPublic();
   const [recipes, setRecipes] = useState<[RecipeDto]>();
-
   const [totalPage, setTotalpage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -34,13 +35,16 @@ export default function Page() {
       `/api/recipe?Page=${searchParams.get("Page") || "1"}&Name=${
         searchParams.get("Name") || ""
       }`
-    ).then((res) => setRecipes(res.data));
+    )
+      .then((res) => setRecipes(res.data))
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   }, [searchParams]);
 
   useEffect(() => {
-    Client.get(`/api/recipe/count`).then((res) =>
-      setTotalpage(1 + Math.floor(res.data / 16))
-    );
+    Client.get(`/api/recipe/count`)
+      .then((res) => setTotalpage(1 + Math.floor(res.data / 16)))
+      .catch((err) => console.log(err));
   }, []);
   return (
     <>
@@ -79,9 +83,15 @@ export default function Page() {
         </div>
       </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {recipes?.map((e) => {
-          return <RecipeCard key={e.id} recipe={e} />;
-        })}
+        {!isLoading ? (
+          recipes?.map((e) => {
+            return <RecipeCard key={e.id} recipe={e} />;
+          })
+        ) : (
+          <div className="h-64 flex justify-center items-center align-middle col-span-full">
+            <LookupLoader />
+          </div>
+        )}
       </div>
       <div className="flex flex-row justify-center mt-8">
         <DefaultPagination totalPage={totalPage} />

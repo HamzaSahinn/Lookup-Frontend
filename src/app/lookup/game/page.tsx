@@ -1,4 +1,5 @@
 "use client";
+import LookupLoader from "@/Components/Loaders/LookupLoader";
 import GameCard from "@/Components/LookupCards/GameCard";
 import DefaultPagination from "@/Components/Pagination/DefaultPagination";
 import { GameDto } from "@/types/dto.types";
@@ -12,6 +13,7 @@ export default function Page() {
   const Client = ApiClientPublic();
   const [games, setGames] = useState<[GameDto]>();
   const [totalPage, setTotalpage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -32,13 +34,16 @@ export default function Page() {
       `/api/game?Page=${searchParams.get("Page") || "1"}&Name=${
         searchParams.get("Name") || ""
       }`
-    ).then((res) => setGames(res.data));
+    )
+      .then((res) => setGames(res.data))
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   }, [searchParams]);
 
   useEffect(() => {
-    Client.get(`/api/game/count`).then((res) =>
-      setTotalpage(1 + Math.floor(res.data / 16))
-    );
+    Client.get(`/api/game/count`)
+      .then((res) => setTotalpage(1 + Math.floor(res.data / 16)))
+      .catch((err) => console.log(err));
   }, []);
   return (
     <>
@@ -77,9 +82,15 @@ export default function Page() {
         </div>
       </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
-        {games?.map((e) => {
-          return <GameCard key={e.id} game={e} />;
-        })}
+        {!isLoading ? (
+          games?.map((e) => {
+            return <GameCard key={e.id} game={e} />;
+          })
+        ) : (
+          <div className="h-64 flex justify-center items-center align-middle col-span-full">
+            <LookupLoader />
+          </div>
+        )}
       </div>
       <div className="flex flex-row justify-center mt-8">
         <DefaultPagination totalPage={totalPage} />

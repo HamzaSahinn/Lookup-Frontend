@@ -74,7 +74,6 @@ export default function ModalBodyRecipe() {
 
   return (
     <>
-      <ToastContainer hideProgressBar={true} position="bottom-right" />
       <form action="#">
         <div className="grid gap-4 mb-4 sm:grid-cols-2">
           <div>
